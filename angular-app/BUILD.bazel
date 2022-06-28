@@ -1,0 +1,60 @@
+"""
+Build file for /
+"""
+load("@aspect_rules_ts//ts:defs.bzl", "ts_config")
+load("@npm_aa//:defs.bzl", "npm_link_all_packages")
+load("@aspect_rules_js//npm:defs.bzl", "npm_link_package")
+load("@aspect_bazel_lib//lib:directory_path.bzl", "directory_path")
+load("@aspect_rules_js//js:defs.bzl", "js_binary")
+
+package(default_visibility = ["//:__subpackages__"])
+
+# ngc
+# npm_package(
+#     name = "npm_angular-cli",
+#     src = "package",
+#     # optimization to prevent an additional copy
+#     provide_source_directory = True,
+#     package = "@angular/angular-cli",
+# )
+
+# npm_link_package(
+#     name = "node_modules/@angular/compiler-cli",
+#     src = "npm_angular-cli",
+#     visibility = ["//visibility:public"],
+# )
+
+directory_path(
+    name = "ngc_entrypoint",
+    directory = ":node_modules/@angular/compiler-cli/dir",
+    path = "bundles/src/bin/ngc.js",
+)
+
+js_binary(
+    name = "ngc",
+    data = [":node_modules/@angular/compiler-cli"],
+    entry_point = ":ngc_entrypoint",
+    visibility = ["//visibility:public"],
+)
+
+# Building this target results in bazel-bin/examples/node_modules/@myorg/js_lib, so that
+# TypeScript and other node programs beneath bazel-bin/examples are able to resolve its location.
+npm_link_package(
+    name = "node_modules/nw-shared",
+    src = "//angular-app/src/nw-shared",
+    root_package = "angular-app",
+    visibility = ["//angular-app:__subpackages__"],
+)
+
+# This macro expands to a npm_link_package for each third-party package in package.json
+npm_link_all_packages(name = "node_modules")
+
+exports_files([])
+
+ts_config(
+    name = "tsconfig",
+    src = "tsconfig.bazel.json",
+    deps = [
+        "//angular-app:tsconfig.json"
+    ]
+)

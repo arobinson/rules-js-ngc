@@ -1,0 +1,36 @@
+"""
+Builds //angular-app/src/app
+"""
+load("//angular-app/tools:angular_ts_project.bzl", "ng_app_ts_project")
+load("@aspect_rules_ts//ts:defs.bzl", "ts_config")
+
+package(default_visibility = ["//:__subpackages__"])
+
+ts_config(
+    name = "tsconfig",
+    src = "tsconfig.json",
+    deps = [
+        "//angular-app/src:tsconfig"
+    ]
+)
+
+ng_app_ts_project(
+    name = "app",
+    srcs = [
+        "app-routing.module.ts",
+        "app.component.ts",
+        "app.module.ts",
+    ],
+    angular_assets = [
+        "app.component.css",
+        "app.component.html"
+    ],
+    deps = [
+        "//angular-app/src/app/header",
+        "//angular-app/src/app/mega-menu",
+        "//angular-app/src/app/shared",
+        "//angular-app:node_modules/@angular/core",
+        "//angular-app:node_modules/@angular/platform-browser",
+        "//angular-app:node_modules/@angular/router"
+    ],
+)

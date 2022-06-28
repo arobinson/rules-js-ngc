@@ -1,0 +1,38 @@
+"""
+Builds //angular-app/src/nw-shared
+"""
+load("//angular-app/tools:typescript.bzl", "ts_project")
+load("@aspect_rules_ts//ts:defs.bzl", "ts_config")
+load("@aspect_rules_js//js:defs.bzl", "js_library")
+
+package(default_visibility = ["//:__subpackages__"])
+
+ts_config(
+    name = "tsconfig",
+    src = "tsconfig.json",
+    deps = [
+        "//angular-app/src:tsconfig"
+    ]
+)
+
+ts_project(
+    name = "nw-shared-ts",
+    tsconfig = "tsconfig",
+    srcs = [
+        "public-api.ts",
+        "index.ts"
+    ],
+    deps = [
+        "//angular-app/src/nw-shared/shared",
+    ],
+)
+
+# Exports the code as an "nw-shared" library so that the "paths" will work with Bazel
+js_library(
+    name = "nw-shared",
+    # package_name = "nw-shared",
+    deps = [
+        "nw-shared-ts",
+        "tsconfig",
+    ],
+)

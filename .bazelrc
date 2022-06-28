@@ -1,0 +1,4 @@
+build --action_env=RUNNING_IN_BAZEL=1
+build --show_timestamps
+
+run --action_env=RUNNING_IN_BAZEL=1

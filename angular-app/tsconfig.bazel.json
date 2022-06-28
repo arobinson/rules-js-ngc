@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "declarationMap": true,
+    "declaration": true,
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "inlineSources": true,
+    "esModuleInterop": false,
+    "preserveSymlinks": false
+  },
+  // If building without sand-boxing, we need to prevent TypeScript from descending into
+  // Bazel's external folder which contains third-party Bazel dependencies.
+  "exclude": ["node_modules/*", "external/*"]
+}

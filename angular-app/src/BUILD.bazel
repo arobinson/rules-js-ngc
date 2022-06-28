@@ -1,0 +1,33 @@
+"""
+Builds /src
+"""
+load("@aspect_rules_ts//ts:defs.bzl", "ts_config")
+load("//angular-app/tools:typescript.bzl", "ts_project")
+load("//angular-app/tools:angular_ts_project.bzl", "ng_app_ts_project")
+
+package(default_visibility = ["//:__subpackages__"])
+
+ts_config(
+    name = "tsconfig",
+    src = "tsconfig.json",
+    deps = [
+        "//angular-app:tsconfig"
+    ]
+)
+
+ts_project(
+    name = "src",
+    tsconfig = ":tsconfig",
+    srcs = [
+        "main.dev.ts",
+        "main.prod.ts",
+    ],
+    deps = [
+        "//angular-app/src/app",
+        "//angular-app:node_modules/@angular/core",
+        "//angular-app:node_modules/@angular/platform-browser",
+        "//angular-app:node_modules/@angular/platform-browser-dynamic"
+    ],
+)
+
+exports_files(["favicon.ico", "tsconfig.json"])

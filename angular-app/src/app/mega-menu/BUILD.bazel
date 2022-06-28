@@ -1,0 +1,37 @@
+"""
+Builds //angular-app/src/app/mega-menu
+"""
+load("//angular-app/tools:angular_ts_project.bzl", "ng_app_ts_project")
+load("//angular-app/tools:typescript.bzl", "ts_project")
+
+package(default_visibility = ["//:__subpackages__"])
+
+ng_app_ts_project(
+    name = "mega-menu",
+    srcs = [
+        "nw-mega-menu.module.ts",
+        "nw-mega-menu.component.ts"
+    ],
+    angular_assets = [
+        "nw-mega-menu.component.css",
+        "nw-mega-menu.component.html",
+    ],
+    deps = [
+        "//angular-app/src/app/shared",
+        "//angular-app:node_modules/@angular/core",
+        "//angular-app:node_modules/@angular/router"
+    ])
+
+# ts_project(
+#     name = "mega-menu",
+#     srcs = [
+#         "nw-mega-menu.module.ts",
+#         "nw-mega-menu.component.ts"
+#     ],
+#     deps = [
+#         "//angular-app/src/app/shared",
+#         "//angular-app:node_modules/@angular/core",
+#         "//angular-app:node_modules/@angular/router"
+#     ],
+#     tsconfig = "//angular-app/src/app:tsconfig")
+

@@ -1,0 +1,4 @@
+{
+  /* spell-checker: disable */
+  "extends": "../tsconfig.bazel.json"
+}

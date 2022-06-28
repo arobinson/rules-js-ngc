@@ -1,0 +1,22 @@
+"""
+Builds //angular-app/src/app/header
+"""
+load("//angular-app/tools:angular_ts_project.bzl", "ng_app_ts_project")
+
+package(default_visibility = ["//:__subpackages__"])
+
+ng_app_ts_project(
+    name = "header",
+    srcs = [
+        "nw-header.module.ts",
+        "nw-header.component.ts",
+    ],
+    angular_assets = [
+        "nw-header.component.css",
+        "nw-header.component.html",
+    ],
+    deps = [
+        "//angular-app/src/app/mega-menu",
+        "//angular-app:node_modules/@angular/core"
+    ],
+)

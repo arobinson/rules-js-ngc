@@ -1,0 +1,20 @@
+"""
+Builds //angular-app/src/app/shared
+"""
+load("//angular-app/tools:angular_ts_project.bzl", "ng_app_ts_project")
+
+package(default_visibility = ["//:__subpackages__"])
+
+ng_app_ts_project(
+    name = "shared",
+    srcs = [
+        ":shared.module.ts"
+    ],
+    deps = [
+        "//angular-app/src/nw-shared",
+        "//angular-app:node_modules/@angular/common",
+        "//angular-app:node_modules/@angular/core",
+        "//angular-app:node_modules/@angular/forms",
+        "//angular-app:node_modules/@angular/router",
+    ],
+)
