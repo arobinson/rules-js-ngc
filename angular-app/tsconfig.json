@@ -34,6 +34,7 @@
     "fullTemplateTypeCheck": false,
     "compilationMode": "full",
     "disableTypeScriptVersionCheck": true,
-    "skipMetadataEmit": true
+    "skipMetadataEmit": true,
+    "generateCodeForLibraries": false,
   }
 }
