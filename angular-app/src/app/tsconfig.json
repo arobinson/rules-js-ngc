@@ -1,9 +1,9 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": "../..",
     "paths": {
-      "nw-shared": ["../nw-shared"]
+      "nw-shared": ["src/nw-shared"]
     }
   }
 }
