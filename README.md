@@ -1,6 +1,7 @@
 # Install
 
 ```
+git checkout relativePathIssue
 cd angular-app
 pnpm i
 ```
