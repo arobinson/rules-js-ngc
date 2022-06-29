@@ -33,4 +33,5 @@ ng_app_ts_project(
         "//angular-app:node_modules/@angular/platform-browser",
         "//angular-app:node_modules/@angular/router"
     ],
+    tsconfig = ':tsconfig'
 )

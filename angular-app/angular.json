@@ -20,12 +20,6 @@
         "build": {
           "builder": "@angular-builders/custom-webpack:browser",
           "options": {
-            "customWebpackConfig": {
-              "path": "./webpack-dev-build.config.ts",
-              "mergeStrategies": {
-                "module.rules": "append"
-              }
-            },
             "outputPath": "./dist/bazel-poc",
             "index": "./src/index.base.html",
             "main": "./src/main.dev.ts",

@@ -9,3 +9,5 @@ import { NwMegaMenuComponent } from './nw-mega-menu.component';
   exports: [NwMegaMenuComponent]
 })
 export class NwMegaMenuModule {}
+
+export * from './nw-mega-menu.component';

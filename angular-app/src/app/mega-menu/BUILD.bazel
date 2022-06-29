@@ -2,7 +2,7 @@
 Builds //angular-app/src/app/mega-menu
 """
 load("//angular-app/tools:angular_ts_project.bzl", "ng_app_ts_project")
-load("//angular-app/tools:typescript.bzl", "ts_project")
+# load("//angular-app/tools:typescript.bzl", "ts_project")
 
 package(default_visibility = ["//:__subpackages__"])
 

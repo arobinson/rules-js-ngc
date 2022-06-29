@@ -12,5 +12,14 @@
   },
   // If building without sand-boxing, we need to prevent TypeScript from descending into
   // Bazel's external folder which contains third-party Bazel dependencies.
-  "exclude": ["node_modules/*", "external/*"]
+  "exclude": ["node_modules/*", "external/*"],
+  "angularCompilerOptions": {
+    "generateCodeForLibraries": true,
+    "entryModule": "src/app/app.module#AppModule",
+    "enableIvy": true,
+    "allowEmptyCodegenFiles": true,
+    "strictInputAccessModifiers": false,
+    "strictTemplates": false,
+    "fullTemplateTypeCheck": false
+  }
 }
