@@ -1,27 +1,17 @@
-# The WORKSPACE file tells Bazel that this directory is a "workspace", which is like a project root.
-# The content of this file specifies all the external dependencies Bazel needs to perform a build.
+workspace(name = "rules_js_ngc")
 
-####################################
-# ESModule imports (and TypeScript imports) can be absolute starting with the workspace name.
-# The name of the workspace should match the npm package where we publish, so that these
-# imports also make sense when referencing the published package.
-workspace(name = "nw-bazel-poc")
-
-# These rules are built-into Bazel but we need to load them first to download more rules
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
+NODE_VERSION = "16.13.2"
+TYPESCRIPT_VERSION = "4.5.5"
+ESBUILD_VERSION = "0.14.39"
+
+# aspect_rules_js
 http_archive(
     name = "aspect_rules_js",
-    sha256 = "529a7100fd757d1fe6d39901688b0ae4cfe033b7d432e9c4cfc022f33e3ec7fc",
-    strip_prefix = "rules_js-1.0.0-beta.2",
-    url = "https://github.com/aspect-build/rules_js/archive/refs/tags/v1.0.0-beta.2.tar.gz",
-)
-
-http_archive(
-    name = "aspect_rules_ts",
-    sha256 = "4a1afbbdfbdecfa476d1884268ce99a2f88330270022fee329dfe36600619483",
-    strip_prefix = "rules_ts-0.8.0",
-    url = "https://github.com/aspect-build/rules_ts/archive/refs/tags/v0.8.0.tar.gz",
+    sha256 = "80e168f9cd62f3640de429b70b34ff817d0d94ada2abaf2cffeef46e35434e1d",
+    strip_prefix = "rules_js-1.0.0-rc.1",
+    url = "https://github.com/aspect-build/rules_js/archive/refs/tags/v1.0.0-rc.1.tar.gz",
 )
 
 load("@aspect_rules_js//js:repositories.bzl", "rules_js_dependencies")
@@ -32,25 +22,52 @@ load("@rules_nodejs//nodejs:repositories.bzl", "nodejs_register_toolchains")
 
 nodejs_register_toolchains(
     name = "nodejs",
-    node_version = "16.13.2",
+    node_version = NODE_VERSION,
 )
 
 load("@aspect_rules_js//npm:npm_import.bzl", "npm_translate_lock")
 
 npm_translate_lock(
-    name = "npm_aa",
-    pnpm_lock = "//angular-app:pnpm-lock.yaml",
+    name = "npm",
+    pnpm_lock = "//:pnpm-lock.yaml",
     verify_node_modules_ignored = "//:.bazelignore",
+)
+
+# aspect_rules_ts
+http_archive(
+    name = "aspect_rules_ts",
+    sha256 = "57aa473c5b4d300adea8eda9c8306519344c4acfcc86a42530cdf23e35cb63d7",
+    strip_prefix = "rules_ts-0.10.0",
+    url = "https://github.com/aspect-build/rules_ts/archive/refs/tags/v0.10.0.tar.gz",
 )
 
 load("@aspect_rules_ts//ts:repositories.bzl", "rules_ts_dependencies")
 
-rules_ts_dependencies(ts_version = '4.5.5')
+rules_ts_dependencies(ts_version = TYPESCRIPT_VERSION)
 
-load("@npm_aa//:repositories.bzl", "npm_repositories")
+load("@npm//:repositories.bzl", "npm_repositories")
 
 npm_repositories()
 
 load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
 
 bazel_skylib_workspace()
+
+# esbuild
+http_archive(
+    name = "aspect_rules_esbuild",
+    sha256 = "77c414e7d82c9a66b4b6d6cb81a7a379f462215b52f5bae90faecde81798189f",
+    strip_prefix = "rules_esbuild-0.9.0",
+    url = "https://github.com/aspect-build/rules_esbuild/archive/refs/tags/v0.9.0.tar.gz",
+)
+
+load("@aspect_rules_esbuild//esbuild:dependencies.bzl", "rules_esbuild_dependencies")
+
+rules_esbuild_dependencies()
+
+load("@aspect_rules_esbuild//esbuild:repositories.bzl", "esbuild_register_toolchains")
+
+esbuild_register_toolchains(
+    name = "esbuild",
+    esbuild_version = ESBUILD_VERSION,
+)

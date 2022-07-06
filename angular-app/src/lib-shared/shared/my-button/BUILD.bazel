@@ -1,0 +1,23 @@
+"""
+Builds //angular-app/src/lib-shared/shared/my-button
+"""
+
+load("//angular-app/tools:angular_ts_project.bzl", "ng_shared_ts_project")
+
+package(default_visibility = ["//:__subpackages__"])
+
+ng_shared_ts_project(
+    name = "my-button",
+    srcs = [
+        "my-button.component.ts",
+        "my-button.module.ts",
+    ],
+    angular_assets = [
+        "my-button.component.css",
+        "my-button.component.html",
+    ],
+    deps = [
+        "//:node_modules/@angular/core",
+        "//:node_modules/tslib"
+    ],
+)

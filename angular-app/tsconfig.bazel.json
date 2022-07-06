@@ -8,7 +8,9 @@
     "sourceMap": true,
     "inlineSources": true,
     "esModuleInterop": false,
-    "preserveSymlinks": false
+    "preserveSymlinks": false,
+    // Needed to allow ngc within the bazel sandbox to resolve relative paths:
+    "rootDirs": ["."]
   },
   // If building without sand-boxing, we need to prevent TypeScript from descending into
   // Bazel's external folder which contains third-party Bazel dependencies.

@@ -1,0 +1,26 @@
+"""
+Builds //angular-app/src/lib-shared
+"""
+load("//angular-app/tools:typescript.bzl", "ts_project")
+load("@aspect_rules_ts//ts:defs.bzl", "ts_config")
+package(default_visibility = ["//:__subpackages__"])
+
+ts_config(
+    name = "tsconfig",
+    src = "tsconfig.bazel.json",
+    deps = [
+        "//angular-app:tsconfig"
+    ]
+)
+
+ts_project(
+    name = "lib-shared",
+    tsconfig = "tsconfig",
+    srcs = [
+        "public-api.ts",
+        "index.ts"
+    ],
+    deps = [
+        "//angular-app/src/lib-shared/shared",
+    ],
+)

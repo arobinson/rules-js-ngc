@@ -1,0 +1,17 @@
+"""
+Builds //angular-app/src/lib-shared/shared
+"""
+load("//angular-app/tools:angular_ts_project.bzl", "ng_shared_ts_project")
+
+package(default_visibility = ["//:__subpackages__"])
+
+ng_shared_ts_project(
+    name = "shared",
+    srcs = [
+        ":my-shared.module.ts"
+    ],
+    deps = [
+        "//angular-app/src/lib-shared/shared/my-button",
+        "//:node_modules/@angular/core"
+    ],
+)

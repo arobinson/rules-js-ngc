@@ -21,7 +21,7 @@
       "dom"
     ],
     "paths": {
-      "nw-shared": ["./src/nw-shared/public-api.ts"]
+      "lib-shared": ["src/lib-shared"]
     },
     "rootDir": "."
   },

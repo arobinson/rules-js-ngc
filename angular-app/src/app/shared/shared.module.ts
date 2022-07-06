@@ -3,8 +3,8 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import {
-  NwSharedModule
-} from 'nw-shared';
+  MySharedModule
+} from 'lib-shared';
 
 /**
  * Do not specify providers for modules that might be imported by a lazy loaded module.
@@ -15,7 +15,7 @@ import {
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-    NwSharedModule,
+    MySharedModule,
   ],
 
   declarations: [],
@@ -25,7 +25,7 @@ import {
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-    NwSharedModule,
+    MySharedModule,
   ],
 
   providers: [DecimalPipe, JsonPipe]

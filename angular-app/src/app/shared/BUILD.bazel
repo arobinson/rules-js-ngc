@@ -11,10 +11,10 @@ ng_app_ts_project(
         ":shared.module.ts"
     ],
     deps = [
-        "//angular-app/src/nw-shared",
-        "//angular-app:node_modules/@angular/common",
-        "//angular-app:node_modules/@angular/core",
-        "//angular-app:node_modules/@angular/forms",
-        "//angular-app:node_modules/@angular/router",
+        "//angular-app/src/lib-shared",
+        "//:node_modules/@angular/common",
+        "//:node_modules/@angular/core",
+        "//:node_modules/@angular/forms",
+        "//:node_modules/@angular/router",
     ],
 )

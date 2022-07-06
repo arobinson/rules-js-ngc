@@ -2,59 +2,155 @@
 Build file for /
 """
 load("@aspect_rules_ts//ts:defs.bzl", "ts_config")
-load("@npm_aa//:defs.bzl", "npm_link_all_packages")
-load("@aspect_rules_js//npm:defs.bzl", "npm_link_package")
 load("@aspect_bazel_lib//lib:directory_path.bzl", "directory_path")
 load("@aspect_rules_js//js:defs.bzl", "js_binary")
+load("//angular-app/tools:typescript.bzl", "ts_project")
+load("@aspect_rules_esbuild//esbuild:defs.bzl", "esbuild")
+load("//angular-app/tools:defs.bzl", "get_directories")
+load("@npm//:html-insert-assets/package_json.bzl", html_insert_assets_bin = "bin")
 
 package(default_visibility = ["//:__subpackages__"])
 
-# ngc
-# npm_package(
-#     name = "npm_angular-cli",
-#     src = "package",
-#     # optimization to prevent an additional copy
-#     provide_source_directory = True,
-#     package = "@angular/angular-cli",
-# )
-
-# npm_link_package(
-#     name = "node_modules/@angular/compiler-cli",
-#     src = "npm_angular-cli",
-#     visibility = ["//visibility:public"],
-# )
-
+#ngc rules
 directory_path(
     name = "ngc_entrypoint",
-    directory = ":node_modules/@angular/compiler-cli/dir",
+    directory = "//:node_modules/@angular/compiler-cli/dir",
     path = "bundles/src/bin/ngc.js",
 )
 
 js_binary(
     name = "ngc",
-    data = [":node_modules/@angular/compiler-cli"],
+    data = ["//:node_modules/@angular/compiler-cli"],
     entry_point = ":ngc_entrypoint",
     visibility = ["//visibility:public"],
 )
 
-# Building this target results in bazel-bin/examples/node_modules/@myorg/js_lib, so that
-# TypeScript and other node programs beneath bazel-bin/examples are able to resolve its location.
-npm_link_package(
-    name = "node_modules/nw-shared",
-    src = "//angular-app/src/nw-shared",
-    root_package = "angular-app",
-    visibility = ["//angular-app:__subpackages__"],
+# html-insert-assets rules
+directory_path(
+    name = "html_insert_assets_entrypoint",
+    directory = ":node_modules/html-insert-assets/dir",
+    path = "dist/run.js",
 )
 
-# This macro expands to a npm_link_package for each third-party package in package.json
-npm_link_all_packages(name = "node_modules")
+js_binary(
+    name = "html_insert_assets",
+    data = [":node_modules/html-insert-assets"],
+    entry_point = ":html_insert_assets_entrypoint",
+)
 
-exports_files([])
+# history-server rules
+directory_path(
+    name = "history_server_entrypoint",
+    directory = "//:node_modules/history-server/dir",
+    path = "modules/cli.js",
+)
 
+js_binary(
+    name = "history_server",
+    data = ["//:node_modules/history-server"],
+    entry_point = ":history_server_entrypoint",
+    # entry_point = "modules/cli.js",
+)
+
+js_binary(
+    name = "dev_server_binary",
+    args = ["-a src --port 5656"],
+    chdir = package_name(),
+    data = [
+        ":bundle_dir",
+        ":inject_scripts_for_dev",
+        "//:node_modules/express",
+        "//:node_modules/glob",
+        "//:node_modules/http-proxy",
+        "//:node_modules/history-server",
+    ],
+    entry_point = ":history_server",
+    # entry_point = "//:node_modules/history-server/modules/cli.js",
+    log_level = "debug",
+)
+
+# tsconfig / tsc
 ts_config(
     name = "tsconfig",
     src = "tsconfig.bazel.json",
     deps = [
-        "//angular-app:tsconfig.json"
-    ]
+        ":tsconfig.json",
+    ],
+)
+
+ts_project(
+    name = "angular_app_tsc",
+    srcs = [
+        ":src/main.dev.ts",
+        ":src/main.prod.ts",
+    ],
+    tsconfig = ":tsconfig",
+    deps = [
+        "//:node_modules/@angular/core",
+        "//:node_modules/@angular/platform-browser",
+        "//:node_modules/@angular/platform-browser-dynamic",
+        "//angular-app/src/app",
+    ],
+)
+
+# Bundling / serving
+_ASSETS = [
+    # This label references an output of the "styles" sass_binary above.
+    # ":styles.css",
+    # "favicon.ico",
+
+    # We load zone.js outside the bundle. That's because it's a "pollyfill"
+    # which speculates that such features might be available in a browser.
+    # Also it's tricky to configure dead code elimination to understand that
+    # zone.js is used, given that we don't have any import statement that
+    # imports from it.
+    #"//:node_modules/zone.js/dist/zone.min.js",
+]
+
+esbuild(
+    name = "bundle_dev",
+    srcs = [
+        ":angular_app_tsc",
+    ],
+    config = ":esbuild.config.mjs",
+    entry_points = [
+        ":src/main.dev.ts",
+    ],
+    format = "esm",
+    output_dir = True,
+    sourcemap = "",
+    splitting = True,
+    deps = [
+        ":angular_app_tsc",
+        "//:node_modules/@angular/compiler-cli",
+        "//:node_modules/esbuild-plugin-babel",
+        "//:node_modules/rxjs",
+    ],
+)
+
+# Get only the output directory from the esbuild bundle (remove the metadata.json file)
+get_directories(
+    name = "bundle_dir",
+    srcs = ":bundle_dev",
+    deps = [
+        "bundle_dev",
+    ],
+)
+
+# Add the assets and bundled JS files to the index.html. Uses index.base.html and creates an index.html file
+html_insert_assets_bin.html_insert_assets(
+    name = "inject_scripts_for_dev",
+    srcs = [
+        ":src/index.base.html",
+        ":bundle_dir",
+    ] + _ASSETS,
+    outs = ["index.html"],
+    args = [
+        "--html=$(execpath :src/index.base.html)",
+        "--out=../../../$@",
+        "--roots=. $(RULEDIR)",
+        "--assets",
+    ] + ["$(execpath %s)" % s for s in _ASSETS] + [
+        "--scripts --module $(execpath :bundle_dir)/main.dev.js",
+    ],
 )

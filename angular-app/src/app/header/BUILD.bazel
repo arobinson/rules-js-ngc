@@ -8,15 +8,15 @@ package(default_visibility = ["//:__subpackages__"])
 ng_app_ts_project(
     name = "header",
     srcs = [
-        "nw-header.module.ts",
-        "nw-header.component.ts",
+        "my-header.module.ts",
+        "my-header.component.ts",
     ],
     angular_assets = [
-        "nw-header.component.css",
-        "nw-header.component.html",
+        "my-header.component.css",
+        "my-header.component.html",
     ],
     deps = [
-        "//angular-app/src/app/mega-menu",
-        "//angular-app:node_modules/@angular/core"
+        "//angular-app/src/app/menu",
+        "//:node_modules/@angular/core"
     ],
 )

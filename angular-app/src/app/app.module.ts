@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { NwHeaderModule } from './header/nw-header.module';
+import { MyHeaderModule } from './header/my-header.module';
 
 
 @NgModule({
@@ -12,7 +12,7 @@ import { NwHeaderModule } from './header/nw-header.module';
   imports: [
     AppRoutingModule,
     BrowserModule,
-    NwHeaderModule,
+    MyHeaderModule,
   ],
   providers: [
     

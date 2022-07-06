@@ -1,27 +1,23 @@
 """
-Builds //angular-app/src/app
+Builds //angular-app/src/app/menu
 """
 load("//angular-app/tools:angular_ts_project.bzl", "ng_app_ts_project")
+# load("//angular-app/tools:typescript.bzl", "ts_project")
 
 package(default_visibility = ["//:__subpackages__"])
 
 ng_app_ts_project(
-    name = "app",
+    name = "menu",
     srcs = [
-        "app-routing.module.ts",
-        "app.component.ts",
-        "app.module.ts",
+        "my-menu.module.ts",
+        "my-menu.component.ts"
     ],
     angular_assets = [
-        "app.component.css",
-        "app.component.html"
+        "my-menu.component.css",
+        "my-menu.component.html",
     ],
     deps = [
-        "//angular-app/src/app/header",
-        "//angular-app/src/app/menu",
         "//angular-app/src/app/shared",
         "//:node_modules/@angular/core",
-        "//:node_modules/@angular/platform-browser",
         "//:node_modules/@angular/router"
-    ]
-)
+    ])
