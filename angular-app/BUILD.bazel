@@ -3,7 +3,7 @@ Build file for /
 """
 load("@aspect_rules_ts//ts:defs.bzl", "ts_config")
 load("@aspect_bazel_lib//lib:directory_path.bzl", "directory_path")
-load("@aspect_rules_js//js:defs.bzl", "js_binary")
+load("@aspect_rules_js//js:defs.bzl", "js_binary", "js_run_binary")
 load("//angular-app/tools:typescript.bzl", "ts_project")
 load("@aspect_rules_esbuild//esbuild:defs.bzl", "esbuild")
 load("//angular-app/tools:defs.bzl", "get_directories")
@@ -46,26 +46,19 @@ directory_path(
 )
 
 js_binary(
-    name = "history_server",
-    data = ["//:node_modules/history-server"],
-    entry_point = ":history_server_entrypoint",
-    # entry_point = "modules/cli.js",
-)
-
-js_binary(
     name = "dev_server_binary",
-    args = ["-a src --port 5656"],
+    args = ["-a . --port 5656"],
     chdir = package_name(),
     data = [
+        "//:node_modules/history-server",
         ":bundle_dir",
         ":inject_scripts_for_dev",
         "//:node_modules/express",
         "//:node_modules/glob",
         "//:node_modules/http-proxy",
-        "//:node_modules/history-server",
     ],
-    entry_point = ":history_server",
-    # entry_point = "//:node_modules/history-server/modules/cli.js",
+    entry_point = ":history_server_entrypoint",
+    # entry_point = "node_modules/history-server/modules/cli.js",
     log_level = "debug",
 )
 
