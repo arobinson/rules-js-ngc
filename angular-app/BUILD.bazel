@@ -47,7 +47,7 @@ directory_path(
 
 js_binary(
     name = "dev_server_binary",
-    args = ["-a .. --port 5656"],
+    args = ["--port", "5656", "-a", ".."],
     chdir = package_name(),
     data = [
         "//:node_modules/history-server",
