@@ -47,7 +47,7 @@ directory_path(
 
 js_binary(
     name = "dev_server_binary",
-    args = ["-a . --port 5656"],
+    args = ["-a .. --port 5656"],
     chdir = package_name(),
     data = [
         "//:node_modules/history-server",
@@ -144,6 +144,6 @@ html_insert_assets_bin.html_insert_assets(
         "--roots=. $(RULEDIR)",
         "--assets",
     ] + ["$(execpath %s)" % s for s in _ASSETS] + [
-        "--scripts --module $(execpath :bundle_dir)/main.dev.js",
+        "--scripts --module ../../../bundle_dev/main.dev.js",
     ],
 )
