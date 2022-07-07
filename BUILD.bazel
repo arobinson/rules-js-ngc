@@ -1,7 +1,17 @@
 load("@npm//:defs.bzl", "npm_link_all_packages")
+load("@aspect_bazel_lib//lib:copy_to_bin.bzl", "copy_to_bin")
+load("@aspect_bazel_lib//lib:copy_file.bzl", "copy_file")
 
 package(default_visibility = ["//:__subpackages__"])
 
 exports_files([])
 
 npm_link_all_packages(name = "node_modules")
+
+
+copy_file(
+    name = "zone.js",
+    src = "//:node_modules/zone.js/dist/zone.min.js",
+    out = "assets/zone.min.js",
+    visibility = ["//angular-app:__subpackages__"],
+)

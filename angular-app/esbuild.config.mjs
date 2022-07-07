@@ -1,8 +1,7 @@
 import * as path from 'path';
 import babel from 'esbuild-plugin-babel';
-// import linkerPlugin from '@angular/compiler-cli/linker/babel';
-import {ConsoleLogger, NodeJSFileSystem, LogLevel} from '@angular/compiler-cli';
-import {createEs2015LinkerPlugin} from '@angular/compiler-cli/linker/babel';
+import { ConsoleLogger, NodeJSFileSystem, LogLevel } from '@angular/compiler-cli';
+import { createEs2015LinkerPlugin } from '@angular/compiler-cli/linker/babel';
 
 /** File system used by the Angular linker plugin. */
 const fileSystem = new NodeJSFileSystem();
@@ -12,7 +11,7 @@ const logger = new ConsoleLogger(LogLevel.info);
 const linkerPlugin = createEs2015LinkerPlugin({
   fileSystem,
   logger,
-  linkerJitMode: false,
+  linkerJitMode: false
 });
 
 /**

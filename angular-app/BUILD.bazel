@@ -3,7 +3,8 @@ Build file for /
 """
 load("@aspect_rules_ts//ts:defs.bzl", "ts_config")
 load("@aspect_bazel_lib//lib:directory_path.bzl", "directory_path")
-load("@aspect_rules_js//js:defs.bzl", "js_binary", "js_run_binary")
+load("@aspect_bazel_lib//lib:copy_to_directory.bzl", "copy_to_directory")
+load("@aspect_rules_js//js:defs.bzl", "js_binary")
 load("//angular-app/tools:typescript.bzl", "ts_project")
 load("@aspect_rules_esbuild//esbuild:defs.bzl", "esbuild")
 load("//angular-app/tools:defs.bzl", "get_directories")
@@ -47,12 +48,11 @@ directory_path(
 
 js_binary(
     name = "dev_server_binary",
-    args = ["--port", "5656", "-a", ".."],
+    args = ["--port", "5656", "-a", "package_dev"],
     chdir = package_name(),
     data = [
         "//:node_modules/history-server",
-        ":bundle_dir",
-        ":inject_scripts_for_dev",
+        ":package_dev",
         "//:node_modules/express",
         "//:node_modules/glob",
         "//:node_modules/http-proxy",
@@ -97,7 +97,7 @@ _ASSETS = [
     # Also it's tricky to configure dead code elimination to understand that
     # zone.js is used, given that we don't have any import statement that
     # imports from it.
-    #"//:node_modules/zone.js/dist/zone.min.js",
+    "//:zone.js",
 ]
 
 esbuild(
@@ -130,22 +130,44 @@ get_directories(
     ],
 )
 
+copy_to_directory(
+    name = "package_for_insert",
+    srcs = [
+        ":src/index.base.html",
+        ":bundle_dir",
+    ] + _ASSETS
+)
+
 # Add the assets and bundled JS files to the index.html. Uses index.base.html and creates an index.html file
 html_insert_assets_bin.html_insert_assets(
     name = "inject_scripts_for_dev",
     srcs = [
-        ":src/index.base.html",
-        ":bundle_dir",
-    ] + _ASSETS,
+        ":package_for_insert",
+    ],
     chdir = package_name(),
     outs = ["index.html"],
     log_level = "debug",
     args = [
-        "--html=src/index.base.html",
+        "--html=package_for_insert/src/index.base.html",
         "--out=index.html",
-        "--roots=. $(RULEDIR)",
+        "--roots=. package_for_insert",
         "--assets",
-    ] + ["$(execpath %s)" % s for s in _ASSETS] + [
-        "--scripts --module $(execpath :bundle_dir)/main.dev.js",
+        "--scripts --module assets/zone.min.js",
+        "--scripts --module bundle_dev/main.dev.js",
     ],
+)
+
+copy_to_directory(
+    name = "package_dev",
+    exclude_prefixes = [
+        "package_for_insert/src"
+    ],
+    root_paths = [
+        "./package_for_insert",
+        "."
+    ],
+    srcs = [
+        ":bundle_dir",
+        ":inject_scripts_for_dev",
+    ] + _ASSETS
 )
