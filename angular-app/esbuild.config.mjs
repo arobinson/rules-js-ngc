@@ -1,5 +1,19 @@
 import * as path from 'path';
 import babel from 'esbuild-plugin-babel';
+// import linkerPlugin from '@angular/compiler-cli/linker/babel';
+import {ConsoleLogger, NodeJSFileSystem, LogLevel} from '@angular/compiler-cli';
+import {createEs2015LinkerPlugin} from '@angular/compiler-cli/linker/babel';
+
+/** File system used by the Angular linker plugin. */
+const fileSystem = new NodeJSFileSystem();
+/** Logger used by the Angular linker plugin. */
+const logger = new ConsoleLogger(LogLevel.info);
+/** Linker babel plugin. */
+const linkerPlugin = createEs2015LinkerPlugin({
+  fileSystem,
+  logger,
+  linkerJitMode: false,
+});
 
 /**
  * Setup a plugin to resolve the modules from the Typescript `paths` to relative imports for esbuild to find
@@ -33,7 +47,7 @@ export default {
       namespace: '',
       config: {
         sourceMaps: true,
-        plugins: ['@angular/compiler-cli/linker/babel']
+        plugins: [linkerPlugin]
       }
     })
   ]
