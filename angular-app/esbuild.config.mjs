@@ -30,7 +30,11 @@ export default {
     libOnResolvePlugin,
     babel({
       filter: /.*/,
-      namespace: ''
+      namespace: '',
+      config: {
+        sourceMaps: true,
+        plugins: ['@angular/compiler-cli/linker/babel']
+      }
     })
   ]
 };

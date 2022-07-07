@@ -1,4 +1,0 @@
-{
-  "sourceMaps": true,
-  "plugins": ["@angular/compiler-cli/linker/babel"]
-}
