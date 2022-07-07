@@ -1,6 +1,7 @@
 """
 Build file for /
 """
+
 load("@aspect_rules_ts//ts:defs.bzl", "ts_config")
 load("@aspect_bazel_lib//lib:directory_path.bzl", "directory_path")
 load("@aspect_bazel_lib//lib:copy_to_directory.bzl", "copy_to_directory")
@@ -9,6 +10,7 @@ load("//angular-app/tools:typescript.bzl", "ts_project")
 load("@aspect_rules_esbuild//esbuild:defs.bzl", "esbuild")
 load("//angular-app/tools:defs.bzl", "get_directories")
 load("@npm//:html-insert-assets/package_json.bzl", html_insert_assets_bin = "bin")
+load("@npm//:sass/package_json.bzl", sass_bin = "bin")
 
 package(default_visibility = ["//:__subpackages__"])
 
@@ -48,17 +50,37 @@ directory_path(
 
 js_binary(
     name = "dev_server_binary",
-    args = ["--port", "5656", "-a", "package_dev"],
+    args = [
+        "--port",
+        "5656",
+        "-a",
+        "package_dev",
+    ],
     chdir = package_name(),
     data = [
-        "//:node_modules/history-server",
         ":package_dev",
         "//:node_modules/express",
         "//:node_modules/glob",
+        "//:node_modules/history-server",
         "//:node_modules/http-proxy",
     ],
     entry_point = ":history_server_entrypoint",
-    # entry_point = "node_modules/history-server/modules/cli.js",
+    log_level = "debug",
+)
+
+# sass
+sass_bin.sass(
+    name = "styles",
+    srcs = [
+        ":src/styles.scss",
+        "//:node_modules/sass",
+    ],
+    outs = ["styles.css"],
+    args = [
+        "src/styles.scss",
+        "styles.css",
+    ],
+    chdir = package_name(),
     log_level = "debug",
 )
 
@@ -89,7 +111,7 @@ ts_project(
 # Bundling / serving
 _ASSETS = [
     # This label references an output of the "styles" sass_binary above.
-    # ":styles.css",
+    ":styles",
     # "favicon.ico",
 
     # We load zone.js outside the bundle. That's because it's a "pollyfill"
@@ -135,7 +157,7 @@ copy_to_directory(
     srcs = [
         ":src/index.base.html",
         ":bundle_dir",
-    ] + _ASSETS
+    ] + _ASSETS,
 )
 
 # Add the assets and bundled JS files to the index.html. Uses index.base.html and creates an index.html file
@@ -144,30 +166,32 @@ html_insert_assets_bin.html_insert_assets(
     srcs = [
         ":package_for_insert",
     ],
-    chdir = package_name(),
     outs = ["index.html"],
-    log_level = "debug",
     args = [
         "--html=package_for_insert/src/index.base.html",
         "--out=index.html",
         "--roots=. package_for_insert",
+        "--stylesheets",
+        "styles.css",
         "--assets",
         "--scripts --module assets/zone.min.js",
         "--scripts --module bundle_dev/main.dev.js",
     ],
+    chdir = package_name(),
+    log_level = "debug",
 )
 
 copy_to_directory(
     name = "package_dev",
-    exclude_prefixes = [
-        "package_for_insert/src"
-    ],
-    root_paths = [
-        "./package_for_insert",
-        "."
-    ],
     srcs = [
         ":bundle_dir",
         ":inject_scripts_for_dev",
-    ] + _ASSETS
+    ] + _ASSETS,
+    exclude_prefixes = [
+        "package_for_insert/src",
+    ],
+    root_paths = [
+        "./package_for_insert",
+        ".",
+    ],
 )
