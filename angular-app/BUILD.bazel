@@ -142,7 +142,7 @@ html_insert_assets_bin.html_insert_assets(
     log_level = "debug",
     args = [
         "--html=src/index.base.html",
-        "--out=../$@",
+        "--out=index.html",
         "--roots=. $(RULEDIR)",
         "--assets",
     ] + ["$(execpath %s)" % s for s in _ASSETS] + [
