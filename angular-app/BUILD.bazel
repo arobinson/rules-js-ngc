@@ -137,13 +137,15 @@ html_insert_assets_bin.html_insert_assets(
         ":src/index.base.html",
         ":bundle_dir",
     ] + _ASSETS,
+    chdir = package_name(),
     outs = ["index.html"],
+    log_level = "debug",
     args = [
-        "--html=$(execpath :src/index.base.html)",
-        "--out=../../../$@",
+        "--html=src/index.base.html",
+        "--out=../$@",
         "--roots=. $(RULEDIR)",
         "--assets",
     ] + ["$(execpath %s)" % s for s in _ASSETS] + [
-        "--scripts --module ../../../bundle_dev/main.dev.js",
+        "--scripts --module $(execpath :bundle_dir)/main.dev.js",
     ],
 )
